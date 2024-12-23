@@ -1,0 +1,6 @@
+[submodule "ext/cwalk"]
+	path = ext/cwalk
+	url = https://github.com/likle/cwalk
+[submodule "ext/glfw"]
+	path = ext/glfw
+	url = https://github.com/glfw/glfw

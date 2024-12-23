@@ -1,0 +1,10 @@
+{
+    "editor.formatOnPaste": true,
+    "editor.formatOnSave": true,
+    "editor.rulers": [
+        120
+    ],
+    "files.associations": {
+        "window.h": "c"
+    }
+}
