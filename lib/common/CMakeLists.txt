@@ -1,10 +1,15 @@
 add_library(chk_common SHARED)
 add_library(chk::common ALIAS chk_common)
 
-# target_link_libraries(chk_common
-#     PRIVATE
-#         cwalk
-# )
+target_compile_definitions(chk_common
+    PRIVATE
+        "-DCHK_LOG_PATH_BASE=\"${CMAKE_CURRENT_SOURCE_DIR}/../\""
+)
+
+target_link_libraries(chk_common
+    PRIVATE
+        cwalk
+)
 
 target_sources(chk_common
     PRIVATE

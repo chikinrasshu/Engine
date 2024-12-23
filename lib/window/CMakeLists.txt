@@ -1,6 +1,11 @@
 add_library(chk_window SHARED)
 add_library(chk::window ALIAS chk_window)
 
+target_compile_definitions(chk_window
+    PRIVATE
+        "-DCHK_LOG_PATH_BASE=\"${CMAKE_CURRENT_SOURCE_DIR}/../\""
+)
+
 target_link_libraries(chk_window
     PUBLIC
         chk::common
@@ -13,7 +18,7 @@ target_sources(chk_window
         "src/window.c"
         "src/gl.c"
     PUBLIC
-    FILE_SET chk_common_headers
+    FILE_SET chk_window_headers
     TYPE HEADERS
     BASE_DIRS "include"
     FILES
