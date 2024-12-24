@@ -17,6 +17,7 @@ target_link_libraries(chk_window
 target_sources(chk_window
     PRIVATE
         "src/window.c"
+        "src/input.c"
     PUBLIC
     FILE_SET chk_window_headers
     TYPE HEADERS

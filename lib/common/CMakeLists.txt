@@ -24,6 +24,7 @@ target_sources(chk_common
         "include/chk/common/arena.h"
         "include/chk/common/common.h"
         "include/chk/common/fmt.h"
+        "include/chk/common/input.h"
         "include/chk/common/log.h"
         "include/chk/common/types.h"
 )

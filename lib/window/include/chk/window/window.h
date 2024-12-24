@@ -1,5 +1,6 @@
 #pragma once
 
+#include <chk/common/input.h>
 #include <chk/common/types.h>
 
 typedef struct chk_window chk_window_t;
@@ -55,10 +56,12 @@ typedef struct chk_window_callbacks {
 } chk_window_callbacks_t;
 
 typedef struct chk_window {
-    chk_window_data_t      data;
+    chk_window_data_t      data, saved_data;
     chk_window_state_t     is;
     chk_window_changed_t   changed;
     chk_window_callbacks_t callbacks;
+
+    chk_input_t input;
 
     void *impl;
 } chk_window_t;
@@ -66,3 +69,11 @@ typedef struct chk_window {
 bool chk_window_init(chk_window_t *window, s32 w, s32 h, const char *caption);
 bool chk_window_destroy(chk_window_t *window);
 bool chk_window_run(chk_window_t *window);
+
+bool chk_window_set_pos(chk_window_t *window, s32 x, s32 y);
+bool chk_window_set_size(chk_window_t *window, s32 w, s32 h);
+bool chk_window_set_fullscreen(chk_window_t *window, bool value);
+
+bool chk_window_init_input(chk_window_t *window);
+bool chk_window_destroy_input(chk_window_t *window);
+bool chk_window_update_input(chk_window_t *window);

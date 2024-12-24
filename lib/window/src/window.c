@@ -69,6 +69,8 @@ bool chk_window_init(chk_window_t *window, s32 w, s32 h, const char *caption) {
                 glfwSetWindowIconifyCallback(window->impl, chk_window_cb_on_min);
                 glfwSetWindowMaximizeCallback(window->impl, chk_window_cb_on_max);
 
+                chk_window_init_input(window);
+
                 window->data.x    = 0;
                 window->data.y    = 0;
                 window->data.w    = w;
@@ -85,6 +87,13 @@ bool chk_window_init(chk_window_t *window, s32 w, s32 h, const char *caption) {
                 window->data.dpi = (dpi_x + dpi_y) * 0.5f;
 
                 glfwShowWindow(window->impl);
+
+                /* Go fullscreen if asked */
+                if (window->is.fullscreen) {
+                    window->saved_data = window->data;
+                    chk_window_set_fullscreen(window, true);
+                }
+
                 window->is.running = true;
                 ++g_chk_window_count;
             } else {
@@ -105,6 +114,7 @@ bool chk_window_destroy(chk_window_t *window) {
     if (!window) { return false; }
 
     if (window->impl) {
+        chk_window_destroy_input(window);
 
 #if defined(_WIN32)
         chk_window_win32_terminate(window);
@@ -129,6 +139,7 @@ bool chk_window_step(chk_window_t *window, bool process_events) {
 
         if (window->callbacks.on_frame) { window->callbacks.on_frame(window, window->callbacks.user_ptr); }
 
+        chk_window_update_input(window);
         if (process_events) { glfwPollEvents(); }
         glfwSwapBuffers(window->impl);
 
@@ -137,6 +148,7 @@ bool chk_window_step(chk_window_t *window, bool process_events) {
         window->data.last_time    = window->data.current_time;
 
         window->changed = (chk_window_changed_t){0};
+        if (!window->is.fullscreen) { window->saved_data = window->data; }
     }
     return window->is.running;
 }
@@ -152,6 +164,45 @@ bool chk_window_run(chk_window_t *window) {
     if (window->callbacks.on_close) { window->callbacks.on_close(window, window->callbacks.user_ptr); }
 
     return result;
+}
+
+bool chk_window_set_pos(chk_window_t *window, s32 x, s32 y) {
+    if (!window) { return false; }
+
+    glfwSetWindowPos(window->impl, x, y);
+
+    return true;
+}
+
+bool chk_window_set_size(chk_window_t *window, s32 w, s32 h) {
+    if (!window) { return false; }
+
+    glfwSetWindowSize(window->impl, w, h);
+
+    return true;
+}
+
+bool chk_window_set_fullscreen(chk_window_t *window, bool value) {
+    if (!window) { return false; }
+    if (value != window->is.fullscreen) {
+        if (value) {
+            // Go fullscreen
+            // window->saved_data = window->data;
+
+            GLFWmonitor *monitor = glfwGetWindowMonitor(window->impl);
+            if (!monitor) { monitor = glfwGetPrimaryMonitor(); }
+
+            const GLFWvidmode *mode = glfwGetVideoMode(monitor);
+            glfwSetWindowMonitor(window->impl, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
+        } else {
+            // Go windowed
+            glfwSetWindowMonitor(window->impl, NULL, window->saved_data.x, window->saved_data.y, window->saved_data.w,
+                                 window->saved_data.h, 0);
+        }
+
+        window->is.fullscreen = value;
+    }
+    return true;
 }
 
 void chk_window_cb_on_error(s32 code, const char *msg) { chk_log_error("GLFW Error %d: %s", code, msg); }
@@ -173,6 +224,8 @@ void chk_window_cb_on_pos(GLFWwindow *impl, s32 x, s32 y) {
         window->data.y      = y;
         window->changed.pos = true;
         if (window->callbacks.on_pos) { window->callbacks.on_pos(window, window->callbacks.user_ptr); }
+
+        chk_log_debug("Window position: %d, %d", x, y);
     }
 }
 
@@ -195,6 +248,7 @@ void chk_window_cb_on_fb_size(GLFWwindow *impl, s32 w, s32 h) {
         if (window->callbacks.on_fb_size) { window->callbacks.on_fb_size(window, window->callbacks.user_ptr); }
 
         glViewport(0, 0, w, h);
+        chk_window_step(window, false);
     }
 }
 
