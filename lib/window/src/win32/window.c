@@ -280,14 +280,12 @@ bool chk_window_win32_init(chk_window_t *window) {
                         g_winapi.dark_mode_enabled =
                             g_winapi.ShouldAppsUseDarkMode() && !chk_window_win32_is_high_contrast();
 
-                        chk_log_info("Dark mode is %s", g_winapi.dark_mode_supported ? "supported" : "unsupported");
-                        chk_log_info("Dark mode is %s", g_winapi.dark_mode_enabled ? "enabled" : "disabled");
+                        chk_log_debug("Dark mode is %s", g_winapi.dark_mode_supported ? "supported" : "unsupported");
+                        chk_log_debug("Dark mode is %s", g_winapi.dark_mode_enabled ? "enabled" : "disabled");
 
                         SetWindowSubclass(handle, chk_window_win32_proc, 69, (DWORD_PTR)window);
-
-                        // FixDarkScrollBar();
                     } else {
-                        chk_log_info("Dark mode is unsupported in version %d.%d", major, minor);
+                        chk_log_warn("Dark mode is unsupported in version %d.%d", major, minor);
                     }
                 } else {
                     chk_log_error("Failed to load uxtheme.dll");
