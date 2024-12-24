@@ -8,6 +8,7 @@
         "window.h": "c",
         "glfw3native.h": "c",
         "loader.h": "c",
-        "opengl.h": "c"
+        "opengl.h": "c",
+        "workbench.h": "c"
     }
 }

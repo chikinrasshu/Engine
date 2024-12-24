@@ -1,8 +1,5 @@
 #include <chk/workbench/workbench.h>
 
-#include <chk/opengl/opengl.h>
-#include <chk/renderer/color.h>
-
 typedef struct chk_engine_data {
     chk_hsl_t bg_color;
 } chk_engine_data_t;
@@ -20,17 +17,20 @@ void on_frame(chk_window_t *window, void *user_ptr) {
 
 int main(int argc, char **argv) {
     chk_window_t      window      = {0};
+    chk_renderer_t    renderer    = {0};
     chk_engine_data_t engine_data = {0};
 
     engine_data.bg_color = chk_rgb_to_hsl((chk_rgb_t){1.f, 0.f, 0.f});
 
     s32 result = 1;
     if (chk_window_init(&window, 800, 600, "Workbench")) {
-        window.callbacks.user_ptr = &engine_data;
-        window.callbacks.on_frame = on_frame;
+        if (chk_renderer_init(&renderer)) {
+            window.callbacks.user_ptr = &engine_data;
+            window.callbacks.on_frame = on_frame;
 
-        result = chk_window_run(&window);
-        chk_window_destroy(&window);
+            result = chk_window_run(&window);
+            chk_window_destroy(&window);
+        }
     }
 
     return result;
