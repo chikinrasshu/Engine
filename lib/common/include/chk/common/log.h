@@ -21,6 +21,8 @@ void chk_impl_log_f(chk_log_level_t lvl, const char *msg, const char *file_base,
 void chk_impl_log(chk_log_level_t lvl, const char *msg, const char *file_base, const char *file, int line,
                   const char *func);
 
+void chk_log_set_level(chk_log_level_t lvl);
+
 #define chk_log(lvl, msg, ...)                                                                                         \
     chk_impl_log##__VA_OPT__(_f)(lvl, msg, CHK_LOG_PATH_BASE, __FILE__, __LINE__, __func__ __VA_OPT__(, ) __VA_ARGS__)
 
