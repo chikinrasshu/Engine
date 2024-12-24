@@ -6,6 +6,8 @@
     ],
     "files.associations": {
         "window.h": "c",
-        "glfw3native.h": "c"
+        "glfw3native.h": "c",
+        "loader.h": "c",
+        "opengl.h": "c"
     }
 }

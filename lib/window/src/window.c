@@ -1,13 +1,14 @@
-#include <chk/common/log.h>
 #include <chk/window/window.h>
+
+#include <chk/common/log.h>
+#include <chk/opengl/opengl.h>
+
+#define GLFW_INCLUDE_NONE
+#include <GLFW/glfw3.h>
 
 #if defined(_WIN32)
 #    include <chk/window/win32/window.h>
 #endif
-
-#define GLFW_INCLUDE_NONE
-#include <GLFW/glfw3.h>
-#include <chk/opengl/gl.h>
 
 void chk_window_cb_on_error(s32 code, const char *msg);
 void chk_window_cb_on_close(GLFWwindow *impl);
@@ -50,10 +51,7 @@ bool chk_window_init(chk_window_t *window, s32 w, s32 h, const char *caption) {
         window->impl = glfwCreateWindow(w, h, caption, NULL, NULL);
         if (window->impl) {
             glfwMakeContextCurrent(window->impl);
-            s32 gl_version = gladLoadGL((GLADloadfunc)glfwGetProcAddress);
-            if (gl_version) {
-                chk_log_info("Loaded OpenGL %d.%d", GLAD_VERSION_MAJOR(gl_version), GLAD_VERSION_MINOR(gl_version));
-
+            if (chk_opengl_init(glfwGetProcAddress)) {
                 // Per platform initialization
 #if defined(_WIN32)
                 chk_window_win32_init(window);
@@ -90,7 +88,6 @@ bool chk_window_init(chk_window_t *window, s32 w, s32 h, const char *caption) {
                 window->is.running = true;
                 ++g_chk_window_count;
             } else {
-                chk_log_error("Failed to load OpenGL");
                 glfwDestroyWindow(window->impl);
                 window->impl = NULL;
             }

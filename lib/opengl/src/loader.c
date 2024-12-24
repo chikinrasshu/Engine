@@ -1,7 +1,7 @@
 /**
  * SPDX-License-Identifier: (WTFPL OR CC0-1.0) AND Apache-2.0
  */
-#include <chk/opengl/gl.h>
+#include <chk/opengl/loader.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

@@ -8,6 +8,7 @@ target_compile_definitions(chk_workbench
 target_link_libraries(chk_workbench
     PUBLIC
         chk::common
+        chk::renderer
         chk::window
 )
 
