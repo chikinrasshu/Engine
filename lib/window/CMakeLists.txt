@@ -26,3 +26,22 @@ target_sources(chk_window
         "include/chk/opengl/gl.h"
         "include/chk/opengl/khrplatform.h"
 )
+
+if(WIN32)
+    target_link_libraries(chk_window
+        PRIVATE
+            Comctl32.lib
+            dwmapi
+    )
+
+    target_sources(chk_window
+        PRIVATE
+            "src/win32/window.c"
+        PUBLIC
+        FILE_SET chk_window_headers
+        TYPE HEADERS
+        BASE_DIRS "include"
+        FILES
+            "include/chk/window/win32/window.h"
+    )
+endif()

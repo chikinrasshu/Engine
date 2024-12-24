@@ -5,6 +5,7 @@
         120
     ],
     "files.associations": {
-        "window.h": "c"
+        "window.h": "c",
+        "glfw3native.h": "c"
     }
 }

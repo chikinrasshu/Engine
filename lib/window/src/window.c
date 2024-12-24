@@ -1,6 +1,10 @@
 #include <chk/common/log.h>
 #include <chk/window/window.h>
 
+#if defined(_WIN32)
+#    include <chk/window/win32/window.h>
+#endif
+
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 #include <chk/opengl/gl.h>
@@ -50,6 +54,11 @@ bool chk_window_init(chk_window_t *window, s32 w, s32 h, const char *caption) {
             if (gl_version) {
                 chk_log_info("Loaded OpenGL %d.%d", GLAD_VERSION_MAJOR(gl_version), GLAD_VERSION_MINOR(gl_version));
 
+                // Per platform initialization
+#if defined(_WIN32)
+                chk_window_win32_init(window);
+#endif
+
                 glfwSetWindowUserPointer(window->impl, window);
                 glfwSetWindowCloseCallback(window->impl, chk_window_cb_on_close);
                 glfwSetWindowRefreshCallback(window->impl, chk_window_cb_on_frame);
@@ -98,7 +107,14 @@ bool chk_window_init(chk_window_t *window, s32 w, s32 h, const char *caption) {
 bool chk_window_destroy(chk_window_t *window) {
     if (!window) { return false; }
 
-    if (window->impl) { glfwDestroyWindow(window->impl); }
+    if (window->impl) {
+
+#if defined(_WIN32)
+        chk_window_win32_terminate(window);
+#endif
+
+        glfwDestroyWindow(window->impl);
+    }
 
     *window = (chk_window_t){0};
 
@@ -117,6 +133,7 @@ bool chk_window_step(chk_window_t *window, bool process_events) {
         if (window->callbacks.on_frame) { window->callbacks.on_frame(window, window->callbacks.user_ptr); }
 
         if (process_events) { glfwPollEvents(); }
+        glfwSwapBuffers(window->impl);
 
         window->data.current_time = glfwGetTime();
         window->data.delta_time   = window->data.current_time - window->data.last_time;
@@ -179,6 +196,8 @@ void chk_window_cb_on_fb_size(GLFWwindow *impl, s32 w, s32 h) {
         window->data.fb_h       = h;
         window->changed.fb_size = true;
         if (window->callbacks.on_fb_size) { window->callbacks.on_fb_size(window, window->callbacks.user_ptr); }
+
+        glViewport(0, 0, w, h);
     }
 }
 

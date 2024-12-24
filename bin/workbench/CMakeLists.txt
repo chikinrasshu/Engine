@@ -21,3 +21,8 @@ target_sources(chk_workbench
     FILES
         "include/chk/workbench/workbench.h"
 )
+
+add_custom_command(TARGET chk_workbench POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_RUNTIME_DLLS:chk_workbench> $<TARGET_FILE_DIR:chk_workbench>
+    COMMAND_EXPAND_LISTS
+)
